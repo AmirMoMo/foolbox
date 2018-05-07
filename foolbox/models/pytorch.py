@@ -60,7 +60,7 @@ class PyTorchModel(DifferentiableModel):
         images = torch.from_numpy(images)
         if self.cuda:  # pragma: no cover
             images = images.cuda()
-        images = Variable(images, volatile=True)
+        images = Variable(images, requires_grad=True)
         predictions = self._model(images)
         predictions = predictions.data
         if self.cuda:  # pragma: no cover
@@ -133,10 +133,10 @@ class PyTorchModel(DifferentiableModel):
         images = torch.from_numpy(image[None])
         if self.cuda:  # pragma: no cover
             images = images.cuda()
-        images = Variable(images, volatile=True)
+        images = Variable(images, requires_grad=True)
         predictions = self._model(images)
         ce = nn.CrossEntropyLoss()
-        loss = ce(predictions, target)
+        loss = ce(predictions.type(torch.FloatTensor), target.type(torch.LongTensor))
         loss = loss.data
         if self.cuda:  # pragma: no cover
             loss = loss.cpu()
